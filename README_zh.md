@@ -14,6 +14,7 @@
 - **功能预测**: PICRUSt2, FAPROTAX 封装
 - **网络分析**: Spearman, SparCC 相关性网络
 - **系统发育**: 系统发育树构建与Bootstrap支持
+- **预测模型**: 疾病分类、疗效预测、预后生存模型 (ML/DL)
 
 ## 安装
 
@@ -41,6 +42,7 @@ from biomekit.utils.simulate import simulate_abundance_data
 from biomekit.abundance import run_lefse
 from biomekit.diversity import alpha_diversity, beta_diversity, pcoa
 from biomekit.function import run_picrust2
+from biomekit.prediction import MicrobiomePipeline
 
 # 生成模拟微生物组数据
 abundance_df, metadata = simulate_abundance_data(
@@ -65,6 +67,16 @@ print(f"\n显著特征数: {results['summary']['n_significant']}")
 # 功能预测
 func_results = run_picrust2(abundance_df)
 print(f"\nKO丰度形状: {func_results['KO_abundance'].shape}")
+
+# 疾病分类预测
+from biomekit.prediction import MicrobiomePipeline
+X = abundance_df.values
+y = (metadata['group'] == 'disease').astype(int).values
+
+pipeline = MicrobiomePipeline(preprocess='clr', classifier='rf')
+pipeline.fit(X, y)
+results = pipeline.evaluate(X, y, cv=5)
+print(f"\n预测准确率: {results['accuracy'][0]:.3f} ± {results['accuracy'][1]:.3f}")
 ```
 
 ## 项目结构
@@ -77,9 +89,10 @@ biomekit/
 │   ├── function/          # 功能预测 (PICRUSt2, FAPROTAX)
 │   ├── network/           # 相关性网络分析
 │   ├── phylogeny/         # 系统发育树工具
+│   ├── prediction/        # 预测模型 (分类、预后)
 │   └── utils/            # 数据IO、转换、可视化
-├── tests/                 # 单元测试与集成测试 (41个测试)
-├── docs/algorithm_notes/ # 算法文档 (8篇)
+├── tests/                 # 单元测试与集成测试 (60+个测试)
+├── docs/algorithm_notes/ # 算法文档 (9篇)
 ├── data/                  # 数据模拟工具
 ├── pyproject.toml         # Poetry包配置
 ├── Dockerfile             # Docker镜像定义
@@ -95,6 +108,7 @@ biomekit/
 | `function` | 基于16S的功能预测 | `run_picrust2`, `run_faprotax` |
 | `network` | 微生物相关性网络 | `sparcc_network`, `spearman_network` |
 | `phylogeny` | 系统发育树构建 | `build_tree`, `bootstrap_tree` |
+| `prediction` | ML模型 (疾病分类/预后) | `MicrobiomePipeline`, `MicrobiomeClassifier`, `SHAPExplainer` |
 | `utils` | 数据IO、转换、可视化 | `read_tsv`, `clr_transform`, `plot_pcoa` |
 
 ## API 示例
@@ -139,6 +153,27 @@ network = sparcc_network(abundance_df, threshold=0.3)
 print(f"网络边数: {len(network)}")
 ```
 
+### 预测模型
+
+```python
+from biomekit.prediction import MicrobiomePipeline, SHAPExplainer
+
+# 疾病分类
+pipeline = MicrobiomePipeline(
+    preprocess='clr',
+    encode='autoencoder',
+    classifier='rf',
+    latent_dim=16
+)
+pipeline.fit(X_train, y_train)
+results = pipeline.evaluate(X_test, y_test, cv=5)
+print(f"准确率: {results['accuracy'][0]:.3f} ± {results['accuracy'][1]:.3f}")
+
+# SHAP可解释性
+explainer = SHAPExplainer(pipeline.clf)
+shap_values = explainer.shap_values(X_test)
+```
+
 ## 测试
 
 ```bash
@@ -163,6 +198,7 @@ pytest tests/test_abundance/ -v
 - [PERMANOVA](docs/algorithm_notes/permanova.md)
 - [PICRUSt2](docs/algorithm_notes/picrust2.md)
 - [FAPROTAX](docs/algorithm_notes/faprotax.md)
+- [预测模型](docs/algorithm_notes/prediction_models.md)
 
 ## 开发路线图
 

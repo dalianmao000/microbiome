@@ -14,6 +14,7 @@ A comprehensive Python toolkit for microbiome data analysis.
 - **Functional Prediction**: PICRUSt2, FAPROTAX wrappers
 - **Network Analysis**: Spearman, SparCC correlation networks
 - **Phylogenetic Tools**: Tree building with bootstrap support
+- **Prediction Models**: Disease classification, prognosis modeling with ML/DL
 
 ## Installation
 
@@ -41,6 +42,7 @@ from biomekit.utils.simulate import simulate_abundance_data
 from biomekit.abundance import run_lefse
 from biomekit.diversity import alpha_diversity, beta_diversity, pcoa
 from biomekit.function import run_picrust2
+from biomekit.prediction import MicrobiomePipeline
 
 # Generate simulated microbiome data
 abundance_df, metadata = simulate_abundance_data(
@@ -65,6 +67,16 @@ print(f"\nSignificant features: {results['summary']['n_significant']}")
 # Functional prediction
 func_results = run_picrust2(abundance_df)
 print(f"\nKO abundance shape: {func_results['KO_abundance'].shape}")
+
+# Disease classification with prediction pipeline
+from biomekit.prediction import MicrobiomePipeline
+X = abundance_df.values
+y = (metadata['group'] == 'disease').astype(int).values
+
+pipeline = MicrobiomePipeline(preprocess='clr', classifier='rf')
+pipeline.fit(X, y)
+results = pipeline.evaluate(X, y, cv=5)
+print(f"\nPrediction Accuracy: {results['accuracy'][0]:.3f} ± {results['accuracy'][1]:.3f}")
 ```
 
 ## Project Structure
@@ -77,9 +89,10 @@ biomekit/
 │   ├── function/        # Functional prediction (PICRUSt2, FAPROTAX)
 │   ├── network/          # Correlation network analysis
 │   ├── phylogeny/         # Phylogenetic tree tools
+│   ├── prediction/       # Prediction models (classification, prognosis)
 │   └── utils/            # I/O, transforms, visualization
-├── tests/                # Unit and integration tests (41 tests)
-├── docs/algorithm_notes/ # Algorithm documentation (8 docs)
+├── tests/                # Unit and integration tests (60+ tests)
+├── docs/algorithm_notes/ # Algorithm documentation (9 docs)
 ├── data/                 # Data simulation utilities
 ├── pyproject.toml        # Poetry package configuration
 ├── Dockerfile           # Docker image definition
@@ -95,6 +108,7 @@ biomekit/
 | `function` | Functional prediction from 16S data | `run_picrust2`, `run_faprotax` |
 | `network` | Microbial correlation networks | `sparcc_network`, `spearman_network` |
 | `phylogeny` | Phylogenetic tree construction | `build_tree`, `bootstrap_tree` |
+| `prediction` | ML models for disease classification & prognosis | `MicrobiomePipeline`, `MicrobiomeClassifier`, `SHAPExplainer` |
 | `utils` | Data I/O, transforms, visualization | `read_tsv`, `clr_transform`, `plot_pcoa` |
 
 ## API Examples
@@ -139,6 +153,27 @@ network = sparcc_network(abundance_df, threshold=0.3)
 print(f"Network edges: {len(network)}")
 ```
 
+### Prediction Models
+
+```python
+from biomekit.prediction import MicrobiomePipeline, SHAPExplainer
+
+# Disease classification
+pipeline = MicrobiomePipeline(
+    preprocess='clr',
+    encode='autoencoder',
+    classifier='rf',
+    latent_dim=16
+)
+pipeline.fit(X_train, y_train)
+results = pipeline.evaluate(X_test, y_test, cv=5)
+print(f"Accuracy: {results['accuracy'][0]:.3f} ± {results['accuracy'][1]:.3f}")
+
+# Model interpretation with SHAP
+explainer = SHAPExplainer(pipeline.clf)
+shap_values = explainer.shap_values(X_test)
+```
+
 ## Testing
 
 ```bash
@@ -163,6 +198,7 @@ Algorithm documentation is available in `docs/algorithm_notes/`:
 - [PERMANOVA](docs/algorithm_notes/permanova.md)
 - [PICRUSt2](docs/algorithm_notes/picrust2.md)
 - [FAPROTAX](docs/algorithm_notes/faprotax.md)
+- [Prediction Models](docs/algorithm_notes/prediction_models.md)
 
 ## Roadmap
 
