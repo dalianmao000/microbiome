@@ -67,6 +67,13 @@ class AutoMLTrain:
                 )
             elif param_type == 'categorical':
                 hyperparams[param_name] = random.choice(param_spec['choices'])
+            elif param_type == 'tuple':
+                # Sample hidden_layer_sizes as a tuple of ints, e.g., (100,) or (64, 32)
+                layers = []
+                n_layers = random.randint(1, 3)
+                for _ in range(n_layers):
+                    layers.append(random.randint(16, 256))
+                hyperparams[param_name] = tuple(layers)
 
         return hyperparams
 

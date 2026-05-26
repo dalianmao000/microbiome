@@ -7,6 +7,11 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
+try:
+    import xgboost as xgb
+    HAS_XGB = True
+except ImportError:
+    HAS_XGB = False
 
 from .evaluator import DomainMetrics
 
@@ -88,6 +93,17 @@ class AutoMLPrepare:
                 kernel=hyperparams.get('kernel', 'rbf'),
                 probability=True,
                 random_state=42,
+            )
+        elif model_type == 'xgb':
+            if not HAS_XGB:
+                raise ImportError("xgboost is required for xgb model type")
+            return xgb.XGBClassifier(
+                n_estimators=hyperparams.get('n_estimators', 200),
+                max_depth=hyperparams.get('max_depth', 6),
+                learning_rate=hyperparams.get('learning_rate', 0.1),
+                random_state=42,
+                use_label_encoder=False,
+                eval_metric='logloss',
             )
         else:
             return RandomForestClassifier(n_estimators=100, random_state=42)
