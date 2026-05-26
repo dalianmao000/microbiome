@@ -48,6 +48,8 @@ class DomainMetrics:
         if weights is None:
             weights = {'performance': 0.5, 'stability': 0.25, 'bio_relevance': 0.25}
         total_weight = sum(weights.values())
+        if total_weight == 0:
+            return 0.0
         normalized_weights = {k: v / total_weight for k, v in weights.items()}
         score = (
             normalized_weights.get('performance', 0.5) * performance +
