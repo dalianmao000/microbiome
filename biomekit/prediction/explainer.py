@@ -71,7 +71,7 @@ class PermutationImportance:
             model_obj, X, y,
             n_repeats=self.n_repeats,
             random_state=self.random_state,
-            n_jobs=-1
+            n_jobs=2
         )
         self.importances_ = result.importances_mean
         return self

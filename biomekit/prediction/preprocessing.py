@@ -83,31 +83,33 @@ class PreprocessingPipeline:
     """
 
     def __init__(self, transform='clr', filter_low_var=True, variance_threshold=0.01):
-        self.transform = transform
+        self.transform_type = transform
         self.filter_low_var = filter_low_var
         self.variance_threshold = variance_threshold
         self.transformer = None
         self.var_filter = None
 
-    def fit_transform(self, X, y=None):
-        # Apply transformation
-        if self.transform == 'clr':
+    def fit(self, X, y=None):
+        """Initialize components without transforming."""
+        if self.transform_type == 'clr':
             self.transformer = CLRTransformer()
-        elif self.transform == 'log':
+        elif self.transform_type == 'log':
             self.transformer = LogTransformer()
-        elif self.transform == 'percent':
+        elif self.transform_type == 'percent':
             self.transformer = PercentTransformer()
         else:
-            raise ValueError(f"Unknown transform: {self.transform}")
+            raise ValueError(f"Unknown transform: {self.transform_type}")
 
-        X_t = self.transformer.fit_transform(X)
-
-        # Filter low variance
         if self.filter_low_var:
             self.var_filter = VarianceFilter(threshold=self.variance_threshold)
-            X_t = self.var_filter.fit_transform(X_t)
+            self.var_filter.fit(X)
 
-        return X_t
+        return self
+
+    def fit_transform(self, X, y=None):
+        """Fit and transform."""
+        self.fit(X, y)
+        return self.transform(X)
 
     def transform(self, X):
         X_t = self.transformer.transform(X)

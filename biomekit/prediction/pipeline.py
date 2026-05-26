@@ -42,7 +42,11 @@ class MicrobiomePipeline:
         if self.preprocess == 'clr':
             self.preprocessor = CLRTransformer()
         elif self.preprocess:
-            self.preprocessor = PreprocessingPipeline(transform=self.preprocess)
+            self.preprocessor = PreprocessingPipeline(
+                transform=self.preprocess,
+                filter_low_var=True,
+                variance_threshold=self.variance_threshold
+            )
         else:
             self.preprocessor = None
 
@@ -156,3 +160,8 @@ class MicrobiomePipeline:
             'variance_threshold': self.variance_threshold,
             **self.classifier_kwargs
         }
+
+    def set_params(self, **params):
+        for key, value in params.items():
+            setattr(self, key, value)
+        return self
