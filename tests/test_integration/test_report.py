@@ -82,3 +82,69 @@ class TestMultiOmicsReport:
         }
         report = MultiOmicsReport(results)
         report.summary()  # Should not raise
+
+    def test_biomarkers_numpy_array_loadings(self):
+        """Test that numpy array loadings are converted to DataFrame."""
+        results = {
+            'biomarkers': {
+                'method': 'diablo',
+                'loadings': np.array([[0.1, 0.2], [0.3, 0.4]]),
+                'selected_features': {},
+                'components': np.array([]),
+                'explained_variance': 0.0,
+            },
+            'correlations': {},
+            'predictions': {},
+        }
+        report = MultiOmicsReport(results)
+        assert isinstance(report.biomarkers, pd.DataFrame)
+        assert report.biomarkers.shape == (2, 2)
+
+    def test_biomarkers_dict_loadings(self):
+        """Test that dict loadings are converted to DataFrame."""
+        results = {
+            'biomarkers': {
+                'method': 'diablo',
+                'loadings': {'feature1': [0.1, 0.2], 'feature2': [0.3, 0.4]},
+                'selected_features': {},
+                'components': np.array([]),
+                'explained_variance': 0.0,
+            },
+            'correlations': {},
+            'predictions': {},
+        }
+        report = MultiOmicsReport(results)
+        assert isinstance(report.biomarkers, pd.DataFrame)
+        assert len(report.biomarkers.columns) == 2
+
+    def test_correlations_numpy_array_loadings(self):
+        """Test that numpy array loadings are converted to DataFrame."""
+        results = {
+            'biomarkers': {},
+            'correlations': {
+                'method': 'cca',
+                'loadings': np.array([[0.5, 0.6], [0.7, 0.8]]),
+                'correlations': np.array([]),
+                'scores': {},
+            },
+            'predictions': {},
+        }
+        report = MultiOmicsReport(results)
+        assert isinstance(report.correlations, pd.DataFrame)
+        assert report.correlations.shape == (2, 2)
+
+    def test_correlations_dict_loadings(self):
+        """Test that dict loadings are converted to DataFrame."""
+        results = {
+            'biomarkers': {},
+            'correlations': {
+                'method': 'cca',
+                'loadings': {'var1': [0.1, 0.2], 'var2': [0.3, 0.4]},
+                'correlations': np.array([]),
+                'scores': {},
+            },
+            'predictions': {},
+        }
+        report = MultiOmicsReport(results)
+        assert isinstance(report.correlations, pd.DataFrame)
+        assert len(report.correlations.columns) == 2

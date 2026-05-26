@@ -24,7 +24,15 @@ class MultiOmicsReport:
         loadings = biomarkers.get('loadings', {})
         if isinstance(loadings, pd.DataFrame):
             return loadings
-        return pd.DataFrame()
+        if isinstance(loadings, np.ndarray):
+            return pd.DataFrame(loadings)
+        if isinstance(loadings, dict):
+            return pd.DataFrame(loadings)
+        # fallback: try to convert other iterable types
+        try:
+            return pd.DataFrame(loadings)
+        except Exception:
+            return pd.DataFrame()
 
     def _parse_correlations(self, correlations: Dict) -> pd.DataFrame:
         """Parse correlations into a DataFrame."""
@@ -34,6 +42,15 @@ class MultiOmicsReport:
             loadings = correlations['loadings']
             if isinstance(loadings, pd.DataFrame):
                 return loadings
+            if isinstance(loadings, np.ndarray):
+                return pd.DataFrame(loadings)
+            if isinstance(loadings, dict):
+                return pd.DataFrame(loadings)
+            # fallback: try to convert other iterable types
+            try:
+                return pd.DataFrame(loadings)
+            except Exception:
+                return pd.DataFrame()
         return pd.DataFrame()
 
     def plot(self) -> plt.Figure:
