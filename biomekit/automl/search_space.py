@@ -33,6 +33,7 @@ class SearchSpace:
             FeatureStrategy.LASSO,
             FeatureStrategy.ANCOM,
             FeatureStrategy.WILCOXON,
+            FeatureStrategy.ZERO_INFLATED,
         ]
         self.model_types: List[ModelType] = [
             ModelType.RANDOM_FOREST,
@@ -40,6 +41,7 @@ class SearchSpace:
             ModelType.SVM,
             ModelType.LOGISTIC_REGRESSION,
             ModelType.GRADIENT_BOOSTING,
+            ModelType.MLP,
         ]
         self._hyperparams = {
             ModelType.RANDOM_FOREST: {
@@ -65,11 +67,19 @@ class SearchSpace:
                 'max_depth': {'type': 'int', 'min': 3, 'max': 10, 'default': 5},
                 'learning_rate': {'type': 'float', 'min': 0.01, 'max': 0.3, 'default': 0.1},
             },
+            ModelType.MLP: {
+                'hidden_layer_sizes': {'type': 'tuple', 'default': (100,)},
+                'activation': {'type': 'categorical', 'choices': ['relu', 'tanh', 'logistic'], 'default': 'relu'},
+                'alpha': {'type': 'float', 'min': 0.0001, 'max': 1.0, 'default': 0.0001},
+                'learning_rate': {'type': 'categorical', 'choices': ['constant', 'invscaling', 'adaptive'], 'default': 'constant'},
+            },
         }
 
     def get_hyperparams(self, model_type: ModelType) -> Dict[str, Any]:
         """Get hyperparam ranges for a model type."""
-        return self._hyperparams.get(model_type, {})
+        if model_type not in self._hyperparams:
+            raise KeyError(f"No hyperparams defined for model type: {model_type}")
+        return self._hyperparams[model_type]
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize search space to dict."""
