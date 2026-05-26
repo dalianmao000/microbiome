@@ -65,7 +65,8 @@ class MultiOmicsPipeline:
         keys = list(omics_data.keys())
         # CCA/Procrustes work on pairs; use first two blocks
         pair_data = {keys[0]: omics_data[keys[0]], keys[1]: omics_data[keys[1]]}
-        if self.correlation_method == 'cca':
+        # DIABLO/sPLS-DA require mixOmics; fall back to CCA/Procrustes for now
+        if self.biomarker_method in ('cca', 'diablo', 'splsda'):
             analyzer = CCAAnalyzer(n_components=self.n_components)
         else:
             analyzer = ProcrustesAnalyzer()
