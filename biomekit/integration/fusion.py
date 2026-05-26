@@ -62,6 +62,7 @@ class CCAAnalyzer:
         self._scores: Optional[Dict[str, np.ndarray]] = None
         self._loadings: Optional[pd.DataFrame] = None
         self._correlations: Optional[np.ndarray] = None
+        self._means: Optional[Dict[str, np.ndarray]] = None
 
     def fit(self, data_dict: Dict[str, pd.DataFrame]) -> 'CCAAnalyzer':
         """Fit CCA on two omics blocks."""
@@ -71,18 +72,18 @@ class CCAAnalyzer:
         X, Y = data_dict[keys[0]].values, data_dict[keys[1]].values
 
         n_comp = min(self.n_components, X.shape[1], Y.shape[1])
+        if n_comp < 1:
+            raise ValueError("Need at least 1 component")
 
-        X_centered = X - X.mean(axis=0)
-        Y_centered = Y - Y.mean(axis=0)
+        X_mean = X.mean(axis=0)
+        Y_mean = Y.mean(axis=0)
+        X_centered = X - X_mean
+        Y_centered = Y - Y_mean
 
-        try:
-            corrs, loadings_x, loadings_y = _canonical_correlation(X_centered, Y_centered, n_comp)
-        except Exception:
-            self._scores = {}
-            self._loadings = pd.DataFrame()
-            self._correlations = np.array([])
-            return self
+        corrs, loadings_x, loadings_y = _canonical_correlation(X_centered, Y_centered, n_comp)
 
+        self._means = {keys[0]: X_mean, keys[1]: Y_mean}
+        self._loadings = {keys[0]: loadings_x, keys[1]: loadings_y}
         self._scores = {
             keys[0]: X_centered @ loadings_x,
             keys[1]: Y_centered @ loadings_y,
@@ -100,7 +101,7 @@ class CCAAnalyzer:
         ] + [
             (keys[1], col) for col in data_dict[keys[1]].columns
         ], names=['block', 'feature'])
-        self._loadings = loadings_df
+        self._loadings_df = loadings_df
         self._correlations = corrs
         return self
 
@@ -110,12 +111,22 @@ class CCAAnalyzer:
         return self.get_results()
 
     def transform(self, data_dict: Dict[str, pd.DataFrame]) -> Dict[str, np.ndarray]:
-        """Apply CCA to new data."""
-        return self._scores or {}
+        """Apply CCA to new data using fitted loadings."""
+        if self._loadings is None or self._means is None:
+            return {}
+        keys = list(data_dict.keys())
+        if set(keys) != set(self._means.keys()):
+            raise ValueError("Data block keys must match training data")
+        result = {}
+        for key in keys:
+            X = data_dict[key].values
+            X_centered = X - self._means[key]
+            result[key] = X_centered @ self._loadings[key]
+        return result
 
     def get_loadings(self) -> pd.DataFrame:
         """Return canonical loadings DataFrame."""
-        return self._loadings if self._loadings is not None else pd.DataFrame()
+        return self._loadings_df if hasattr(self, '_loadings_df') and self._loadings_df is not None else pd.DataFrame()
 
     def get_results(self) -> Dict:
         """Return full results dict."""
@@ -140,11 +151,12 @@ class ProcrustesAnalyzer:
         keys = list(data_dict.keys())
         mtx1, mtx2 = data_dict[keys[0]], data_dict[keys[1]]
 
-        try:
-            mtx1_transformed, mtx2_transformed, discrepancy = procrustes(mtx1, mtx2)
-        except Exception:
-            self._result = {'statistic': 0.0, 'residuals': 0.0, 'transformed_coords': {}}
-            return self
+        if mtx1.shape != mtx2.shape:
+            raise ValueError("Coordinate matrices must have the same shape")
+        if mtx1.shape[0] < 2 or mtx1.shape[1] < 1:
+            raise ValueError("Coordinate matrices must have at least 2 rows and 1 column")
+
+        mtx1_transformed, mtx2_transformed, discrepancy = procrustes(mtx1, mtx2)
 
         self._result = {
             'statistic': discrepancy,
@@ -159,7 +171,17 @@ class ProcrustesAnalyzer:
         return self.get_results()
 
     def transform(self, data_dict: Dict[str, np.ndarray]) -> Dict:
-        return self._result or {}
+        """Apply Procrustes to new data.
+
+        Note: Procrustes alignment is not a simple linear transform.
+        New data can only be aligned if reference target is provided.
+        This method raises NotImplementedError as Procrustes does not
+        support transforming new data without re-fitting.
+        """
+        raise NotImplementedError(
+            "Procrustes does not support transform() for new data. "
+            "Use fit() then get_results() to access transformed coordinates from training."
+        )
 
     def get_loadings(self) -> pd.DataFrame:
         raise NotImplementedError("Procrustes does not produce loadings")
