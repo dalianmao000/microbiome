@@ -29,8 +29,8 @@ docker-compose up -d
 
 ### From source
 ```bash
-git clone https://github.com/yourusername/microbiome-algo-lib.git
-cd microbiome-algo-lib
+git clone https://github.com/dalianmao000/biomekit.git
+cd biomekit
 pip install -e .
 ```
 
@@ -70,18 +70,32 @@ print(f"\nKO abundance shape: {func_results['KO_abundance'].shape}")
 ## Project Structure
 
 ```
-microbiome-algo-lib/
+biomekit/
 ├── biomekit/              # Main Python package
 │   ├── abundance/        # Differential abundance (LEfSe, DESeq2, ANCOM-BC)
 │   ├── diversity/        # Alpha/Beta diversity and stats
 │   ├── function/        # Functional prediction (PICRUSt2, FAPROTAX)
-│   ├── network/        # Correlation network analysis
-│   ├── phylogeny/      # Phylogenetic tree tools
-│   └── utils/         # I/O, transforms, visualization
-├── tests/              # Unit and integration tests
-├── docs/               # Algorithm documentation
-└── data/               # Data simulation utilities
+│   ├── network/          # Correlation network analysis
+│   ├── phylogeny/         # Phylogenetic tree tools
+│   └── utils/            # I/O, transforms, visualization
+├── tests/                # Unit and integration tests (41 tests)
+├── docs/algorithm_notes/ # Algorithm documentation (8 docs)
+├── data/                 # Data simulation utilities
+├── pyproject.toml        # Poetry package configuration
+├── Dockerfile           # Docker image definition
+└── docker-compose.yml   # Docker Compose configuration
 ```
+
+## Module Overview
+
+| Module | Description | Key Functions |
+|--------|-------------|---------------|
+| `abundance` | Differential abundance analysis | `run_lefse`, `run_deseq2`, `run_ancombc` |
+| `diversity` | Alpha/Beta diversity & statistics | `alpha_diversity`, `beta_diversity`, `permanova` |
+| `function` | Functional prediction from 16S data | `run_picrust2`, `run_faprotax` |
+| `network` | Microbial correlation networks | `sparcc_network`, `spearman_network` |
+| `phylogeny` | Phylogenetic tree construction | `build_tree`, `bootstrap_tree` |
+| `utils` | Data I/O, transforms, visualization | `read_tsv`, `clr_transform`, `plot_pcoa` |
 
 ## API Examples
 
@@ -150,6 +164,22 @@ Algorithm documentation is available in `docs/algorithm_notes/`:
 - [PICRUSt2](docs/algorithm_notes/picrust2.md)
 - [FAPROTAX](docs/algorithm_notes/faprotax.md)
 
+## Roadmap
+
+| Priority | Module/Feature | Status | Description |
+|:--------:|:---------------|:------:|:------------|
+| P0 | Algorithm Module Library | ✅ Complete | Core differential abundance, diversity, and network algorithms |
+| P1 | Prediction Model Suite | 🔜 Planned | Disease classification,疗效预测 models with ML/DL |
+| P2 | Multi-omics Integration | 🔜 Planned | 16S + metabolome + metagenome fusion analysis |
+| P3 | Snakemake Pipeline | 🔜 Planned | Production-grade workflow with Snakemake/Nextflow |
+| P4 | Web Dashboard | 🔜 Planned | Interactive visualization dashboard |
+| P5 | AutoML Module | 🔜 Planned | Automated hyperparameter optimization for microbiome data |
+
+### Status Legend
+- ✅ Complete - Ready for use
+- 🔜 Planned - On development roadmap
+- 🔄 In Progress - Currently being developed
+
 ## Use Cases
 
 This project demonstrates proficiency in:
@@ -160,10 +190,14 @@ This project demonstrates proficiency in:
 4. **Data visualization**: Creating publication-quality plots
 5. **Software engineering**: Packaging, testing, documentation best practices
 
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
 ## License
 
-MIT License
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Author
 
-Your Name \<your.email@example.com\>
+dalianmao000

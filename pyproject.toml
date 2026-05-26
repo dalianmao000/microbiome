@@ -2,9 +2,21 @@
 name = "biomekit"
 version = "0.1.0"
 description = "A comprehensive Python toolkit for microbiome data analysis"
-authors = ["Your Name <your.email@example.com>"]
+authors = ["dalianmao000 <dalianmao000@users.noreply.github.com>"]
 readme = "README.md"
+license = "MIT"
 packages = [{include = "biomekit"}]
+repository = "https://github.com/dalianmao000/biomekit"
+keywords = ["microbiome", "bioinformatics", "16s", "metagenomics", "leakse", "deseq2"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -20,12 +32,29 @@ plotly = "^5.15"
 rpy2 = "^3.5"
 pytest = "^7.4"
 pytest-cov = "^4.1"
+scikit-learn = "^1.3"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0"
 sphinx = "^7.1"
 sphinx-rtd-theme = "^2.0"
 numpydoc = "^1.5"
+black = "^23.0"
+isort = "^5.12"
+mypy = "^1.5"
+
+[tool.black]
+line-length = 100
+target-version = ['py310', 'py311']
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
 
 [build-system]
 requires = ["poetry-core"]
