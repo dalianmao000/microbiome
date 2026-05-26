@@ -25,6 +25,10 @@ class AutoMLPrepare:
         n_features: int = 20,
         disease_label: Optional[str] = None,
     ):
+        if cv_folds < 2:
+            raise ValueError("cv_folds must be >= 2")
+        if n_features < 1:
+            raise ValueError("n_features must be >= 1")
         self.X = X
         self.y = y
         self.cv_folds = cv_folds
@@ -109,8 +113,7 @@ class AutoMLPrepare:
                 feature_strategy, X_train, y_train, X_test, n_features
             )
 
-            if compute_stability:
-                selected_features_per_fold.append(features)
+            selected_features_per_fold.append(features)
 
             model = self._get_model(model_type, hyperparams)
             model.fit(X_train_sel, y_train)
@@ -120,13 +123,26 @@ class AutoMLPrepare:
         performance = float(np.mean(fold_scores))
 
         stability = 0.0
-        if compute_stability and selected_features_per_fold:
+        bio_relevance = 0.0
+        selected_features = []
+
+        if selected_features_per_fold:
             stability = float(self.domain_metrics.feature_stability(selected_features_per_fold))
 
-        bio_relevance = 0.0
-        if compute_stability and selected_features_per_fold and self.disease_label:
-            all_features = [f for feats in selected_features_per_fold for f in feats]
-            bio_relevance = float(self.domain_metrics.biological_relevance(all_features, self.disease_label))
+            if self.disease_label:
+                # Compute stable features: appearing in at least 50% of folds
+                n_folds = len(selected_features_per_fold)
+                feature_counts: Dict[str, int] = {}
+                for feats in selected_features_per_fold:
+                    for f in feats:
+                        feature_counts[f] = feature_counts.get(f, 0) + 1
+                threshold = n_folds * 0.5
+                stable_features = [f for f, count in feature_counts.items() if count >= threshold]
+                if stable_features:
+                    bio_relevance = float(self.domain_metrics.biological_relevance(stable_features, self.disease_label))
+
+            # selected_features is the last fold's features (for consistency)
+            selected_features = selected_features_per_fold[-1]
 
         score = self.domain_metrics.compute_composite(
             performance=performance,
@@ -141,5 +157,5 @@ class AutoMLPrepare:
                 'stability': stability,
                 'bio_relevance': bio_relevance,
             },
-            'selected_features': selected_features_per_fold[-1] if selected_features_per_fold else [],
+            'selected_features': selected_features,
         }
