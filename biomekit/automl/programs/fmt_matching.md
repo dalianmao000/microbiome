@@ -1,7 +1,7 @@
 # program.md - Donor-Recipient Matching for FMT Efficacy Prediction
 
 > **场景**: 菌群移植(FMT)供体-受体匹配算法
-> **适用**: 承葛医学检验 + 精准菌群移植治疗平台
+> **适用**: 精准菌群移植治疗平台
 
 ---
 

@@ -1,7 +1,7 @@
 # program.md - Multi-omics Integration for Phenotype Prediction
 
 > **场景**: 多组学整合预测模型 (基因组+代谢组+表型)
-> **适用**: 承葛医药微生态药物研发 + 多中心数据整合分析
+> **适用**: 微生态药物研发 + 多中心数据整合分析
 
 ---
 
