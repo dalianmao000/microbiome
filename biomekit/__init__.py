@@ -32,6 +32,15 @@ try:
 except ImportError:
     pass
 
+try:
+    from biomekit.prediction import (
+        MicrobiomePipeline, MicrobiomeClassifier, SurvivalRegressor,
+        SHAPExplainer, PermutationImportance,
+        extract_top_markers, plot_feature_importance, plot_shap_summary
+    )
+except ImportError:
+    pass
+
 __all__ = [
     # Utils
     "read_biom", "read_tsv", "read_csv", "read_any", "detect_format",
@@ -47,4 +56,8 @@ __all__ = [
     "build_tree", "bootstrap_tree",
     # Network (if available)
     "sparcc_network", "spearman_network",
+    # Prediction (if available)
+    "MicrobiomePipeline", "MicrobiomeClassifier", "SurvivalRegressor",
+    "SHAPExplainer", "PermutationImportance",
+    "extract_top_markers", "plot_feature_importance", "plot_shap_summary",
 ]
