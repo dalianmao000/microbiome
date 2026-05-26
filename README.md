@@ -169,7 +169,7 @@ Algorithm documentation is available in `docs/algorithm_notes/`:
 | Priority | Module/Feature | Status | Description |
 |:--------:|:---------------|:------:|:------------|
 | P0 | Algorithm Module Library | ✅ Complete | Core differential abundance, diversity, and network algorithms |
-| P1 | Prediction Model Suite | 🔜 Planned | Disease classification,疗效预测 models with ML/DL |
+| P1 | Prediction Model Suite | ✅ Complete | Disease classification, efficacy prediction, prognosis models (ML/DL) |
 | P2 | Multi-omics Integration | 🔜 Planned | 16S + metabolome + metagenome fusion analysis |
 | P3 | Snakemake Pipeline | 🔜 Planned | Production-grade workflow with Snakemake/Nextflow |
 | P4 | Web Dashboard | 🔜 Planned | Interactive visualization dashboard |
