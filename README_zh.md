@@ -15,6 +15,7 @@
 - **网络分析**: Spearman, SparCC 相关性网络
 - **系统发育**: 系统发育树构建与Bootstrap支持
 - **预测模型**: 疾病分类、疗效预测、预后生存模型 (ML/DL)
+- **多组学整合**: 16S + 代谢组 + 宏基因组融合分析 (DIABLO, CCA, Procrustes, Early/Late Fusion)
 
 ## 安装
 
@@ -90,6 +91,7 @@ biomekit/
 │   ├── network/           # 相关性网络分析
 │   ├── phylogeny/         # 系统发育树工具
 │   ├── prediction/        # 预测模型 (分类、预后)
+│   ├── integration/      # 多组学整合 (生物标志物发现、相关性)
 │   └── utils/            # 数据IO、转换、可视化
 ├── tests/                 # 单元测试与集成测试 (60+个测试)
 ├── docs/algorithm_notes/ # 算法文档 (9篇)
@@ -109,6 +111,7 @@ biomekit/
 | `network` | 微生物相关性网络 | `sparcc_network`, `spearman_network` |
 | `phylogeny` | 系统发育树构建 | `build_tree`, `bootstrap_tree` |
 | `prediction` | ML模型 (疾病分类/预后) | `MicrobiomePipeline`, `MicrobiomeClassifier`, `SHAPExplainer` |
+| `integration` | 多组学整合 (生物标志物发现、相关性、分类) | `MultiOmicsPipeline`, `MultiOmicsReport` |
 | `utils` | 数据IO、转换、可视化 | `read_tsv`, `clr_transform`, `plot_pcoa` |
 
 ## API 示例
@@ -206,7 +209,7 @@ pytest tests/test_abundance/ -v
 |:------:|:----------|:----:|:------|
 | P0 | 算法模块库 | ✅ 完成 | 核心差异丰度、多样性、网络算法 |
 | P1 | 预测模型集 | 🔜 计划中 | 疾病分类、疗效预测模型（ML/DL） |
-| P2 | 多组学整合 | 🔜 计划中 | 16S + 代谢组 + 宏基因组融合分析 |
+| P2 | 多组学整合 | ✅ 完成 | 16S + 代谢组 + 宏基因组融合分析 |
 | P3 | Snakemake流程 | 🔜 计划中 | 基于Snakemake/Nextflow的生产级工作流 |
 | P4 | Web仪表盘 | 🔜 计划中 | 交互式可视化仪表盘 |
 | P5 | AutoML模块 | 🔜 计划中 | 微生物组数据自动超参数优化 |

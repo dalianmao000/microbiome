@@ -15,6 +15,7 @@ A comprehensive Python toolkit for microbiome data analysis.
 - **Network Analysis**: Spearman, SparCC correlation networks
 - **Phylogenetic Tools**: Tree building with bootstrap support
 - **Prediction Models**: Disease classification, prognosis modeling with ML/DL
+- **Multi-omics Integration**: 16S + metabolome + metagenome fusion analysis (DIABLO, CCA, Procrustes, Early/Late Fusion)
 
 ## Installation
 
@@ -90,6 +91,7 @@ biomekit/
 │   ├── network/          # Correlation network analysis
 │   ├── phylogeny/         # Phylogenetic tree tools
 │   ├── prediction/       # Prediction models (classification, prognosis)
+│   ├── integration/      # Multi-omics integration (biomarker discovery, correlation)
 │   └── utils/            # I/O, transforms, visualization
 ├── tests/                # Unit and integration tests (60+ tests)
 ├── docs/algorithm_notes/ # Algorithm documentation (9 docs)
@@ -109,6 +111,7 @@ biomekit/
 | `network` | Microbial correlation networks | `sparcc_network`, `spearman_network` |
 | `phylogeny` | Phylogenetic tree construction | `build_tree`, `bootstrap_tree` |
 | `prediction` | ML models for disease classification & prognosis | `MicrobiomePipeline`, `MicrobiomeClassifier`, `SHAPExplainer` |
+| `integration` | Multi-omics integration (biomarker discovery, correlation, classification) | `MultiOmicsPipeline`, `MultiOmicsReport` |
 | `utils` | Data I/O, transforms, visualization | `read_tsv`, `clr_transform`, `plot_pcoa` |
 
 ## API Examples
@@ -206,7 +209,7 @@ Algorithm documentation is available in `docs/algorithm_notes/`:
 |:--------:|:---------------|:------:|:------------|
 | P0 | Algorithm Module Library | ✅ Complete | Core differential abundance, diversity, and network algorithms |
 | P1 | Prediction Model Suite | ✅ Complete | Disease classification, efficacy prediction, prognosis models (ML/DL) |
-| P2 | Multi-omics Integration | 🔜 Planned | 16S + metabolome + metagenome fusion analysis |
+| P2 | Multi-omics Integration | ✅ Complete | 16S + metabolome + metagenome fusion analysis |
 | P3 | Snakemake Pipeline | 🔜 Planned | Production-grade workflow with Snakemake/Nextflow |
 | P4 | Web Dashboard | 🔜 Planned | Interactive visualization dashboard |
 | P5 | AutoML Module | 🔜 Planned | Automated hyperparameter optimization for microbiome data |
