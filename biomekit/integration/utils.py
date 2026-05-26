@@ -28,12 +28,32 @@ def align_omics_data(omics_dict: Dict[str, pd.DataFrame]) -> Dict[str, pd.DataFr
 
 
 def concat_with_labels(omics_dict: Dict[str, pd.DataFrame]) -> pd.DataFrame:
-    """Concatenate omics DataFrames with omics-type labels in column names."""
+    """Concatenate omics DataFrames with omics-type labels in column names.
+
+    All DataFrames must have the same sample indices. Use align_omics_data()
+    first if alignment is needed.
+    """
+    if not omics_dict:
+        return pd.DataFrame()
+
     frames = []
     for omics_name, df in omics_dict.items():
         labeled_df = df.copy()
         labeled_df.columns = [f"{omics_name}_{col}" for col in df.columns]
         frames.append(labeled_df)
+
+    # Validate that all DataFrames have the same sample indices
+    indices = [set(df.index) for df in frames]
+    if len(indices) > 1:
+        first_idx = indices[0]
+        for i, idx in enumerate(indices[1:], start=1):
+            if idx != first_idx:
+                raise ValueError(
+                    f"DataFrame indices do not match. All DataFrames must have the same "
+                    f"sample indices for concatenation. Got different indices for "
+                    f"{list(omics_dict.keys())[0]} and {list(omics_dict.keys())[i]}."
+                )
+
     return pd.concat(frames, axis=1)
 
 

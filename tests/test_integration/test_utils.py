@@ -42,6 +42,12 @@ class TestConcatWithLabels:
         assert '16s_f1' in result.columns
         assert 'metabolomics_f3' in result.columns
 
+    def test_mismatched_indices_raises(self):
+        df_16s = pd.DataFrame([[1, 2]], columns=['f1', 'f2'], index=['s1', 's2'])
+        df_meta = pd.DataFrame([[5, 6]], columns=['f3', 'f4'], index=['s1', 's99'])
+        with pytest.raises(ValueError, match="indices do not match"):
+            concat_with_labels({'16s': df_16s, 'metabolomics': df_meta})
+
 class TestValidateOmicsKeys:
     def test_valid_keys(self):
         data = {'16s': pd.DataFrame(), 'metabolomics': pd.DataFrame(), 'metagenomics': pd.DataFrame()}
