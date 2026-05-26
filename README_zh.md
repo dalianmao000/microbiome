@@ -85,16 +85,25 @@ print(f"\n预测准确率: {results['accuracy'][0]:.3f} ± {results['accuracy'][
 ```
 biomekit/
 ├── biomekit/              # 主Python包
-│   ├── abundance/         # 差异丰度分析 (LEfSe, DESeq2, ANCOM-BC)
+│   ├── abundance/        # 差异丰度分析 (LEfSe, DESeq2, ANCOM-BC)
 │   ├── diversity/         # Alpha/Beta多样性及统计
 │   ├── function/          # 功能预测 (PICRUSt2, FAPROTAX)
-│   ├── network/           # 相关性网络分析
+│   ├── network/          # 相关性网络分析
 │   ├── phylogeny/         # 系统发育树工具
 │   ├── prediction/        # 预测模型 (分类、预后)
 │   ├── integration/      # 多组学整合 (生物标志物发现、相关性)
+│   ├── automl/           # 自动超参优化 (autoresearch方法论)
+│   │   ├── programs/     # 场景化program.md模板
+│   │   ├── evaluator.py  # 固定评估器
+│   │   ├── train.py     # Agent可修改训练代码
+│   │   ├── prepare.py   # 数据准备与CV评估
+│   │   ├── search_space.py # 搜索空间定义
+│   │   └── pipeline.py # 自动化流水线
 │   └── utils/            # 数据IO、转换、可视化
 ├── tests/                 # 单元测试与集成测试 (60+个测试)
-├── docs/algorithm_notes/ # 算法文档 (9篇)
+├── docs/
+│   ├── algorithm_notes/  # 算法文档 (9篇)
+│   └── memo-*.md         # 技术备忘录
 ├── data/                  # 数据模拟工具
 ├── pyproject.toml         # Poetry包配置
 ├── Dockerfile             # Docker镜像定义
