@@ -132,7 +132,7 @@ class CCAAnalyzer:
         """Return full results dict."""
         return {
             'method': 'cca',
-            'loadings': self._loadings if self._loadings is not None else pd.DataFrame(),
+            'loadings': self._loadings_df if hasattr(self, '_loadings_df') and self._loadings_df is not None else pd.DataFrame(),
             'correlations': self._correlations if self._correlations is not None else np.array([]),
             'scores': self._scores if self._scores else {},
         }
