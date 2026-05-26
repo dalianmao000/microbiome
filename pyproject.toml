@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "biomekit"
+version = "0.1.0"
+description = "A comprehensive Python toolkit for microbiome data analysis"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "biomekit"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.24"
+pandas = "^2.0"
+scipy = "^1.10"
+statsmodels = "^0.14"
+scikit-bio = "^0.5"
+biom-format = "^2.1"
+matplotlib = "^3.7"
+seaborn = "^0.12"
+plotly = "^5.15"
+rpy2 = "^3.5"
+pytest = "^7.4"
+pytest-cov = "^4.1"
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0"
+sphinx = "^7.1"
+sphinx-rtd-theme = "^2.0"
+numpydoc = "^1.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
