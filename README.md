@@ -112,6 +112,7 @@ biomekit/
 | `phylogeny` | Phylogenetic tree construction | `build_tree`, `bootstrap_tree` |
 | `prediction` | ML models for disease classification & prognosis | `MicrobiomePipeline`, `MicrobiomeClassifier`, `SHAPExplainer` |
 | `integration` | Multi-omics integration (biomarker discovery, correlation, classification) | `MultiOmicsPipeline`, `MultiOmicsReport` |
+| `automl` | Automated hyperparameter optimization (autoresearch methodology) | `AutoMLPipeline`, `Program`, `AutoMLTrain` |
 | `utils` | Data I/O, transforms, visualization | `read_tsv`, `clr_transform`, `plot_pcoa` |
 
 ## API Examples
@@ -177,6 +178,23 @@ explainer = SHAPExplainer(pipeline.clf)
 shap_values = explainer.shap_values(X_test)
 ```
 
+### AutoML Module
+
+```python
+from biomekit.automl import AutoMLPipeline, Program, list_programs
+
+# List available program templates
+print(list_programs())
+# ['lung_gut_axis', 'nine_constitution', 'multiomics_integration', 'biomarker_discovery', 'fmt_matching']
+
+# Run AutoML with program constraints
+program = Program(weights={'performance': 0.5, 'stability': 0.25, 'bio_relevance': 0.25})
+pipeline = AutoMLPipeline(X, y, program=program)
+results = pipeline.run(max_iterations=20)
+```
+
+AutoML follows **autoresearch methodology**: fixed evaluator (`prepare.py`) + agent-modifiable code (`train.py`) + human-authored constraints (`program.md`). Supports multi-objective optimization across performance, feature stability, and biological relevance.
+
 ## Testing
 
 ```bash
@@ -212,7 +230,7 @@ Algorithm documentation is available in `docs/algorithm_notes/`:
 | P2 | Multi-omics Integration | ✅ Complete | 16S + metabolome + metagenome fusion analysis |
 | P3 | Snakemake Pipeline | 🔜 Planned | Production-grade workflow with Snakemake/Nextflow |
 | P4 | Web Dashboard | 🔜 Planned | Interactive visualization dashboard |
-| P5 | AutoML Module | 🔜 Planned | Automated hyperparameter optimization for microbiome data |
+| P5 | AutoML Module | ✅ Complete | Automated hyperparameter optimization with autoresearch methodology |
 
 ### Status Legend
 - ✅ Complete - Ready for use

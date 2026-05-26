@@ -112,6 +112,7 @@ biomekit/
 | `phylogeny` | 系统发育树构建 | `build_tree`, `bootstrap_tree` |
 | `prediction` | ML模型 (疾病分类/预后) | `MicrobiomePipeline`, `MicrobiomeClassifier`, `SHAPExplainer` |
 | `integration` | 多组学整合 (生物标志物发现、相关性、分类) | `MultiOmicsPipeline`, `MultiOmicsReport` |
+| `automl` | 自动超参数优化 (autoresearch方法论) | `AutoMLPipeline`, `Program`, `AutoMLTrain` |
 | `utils` | 数据IO、转换、可视化 | `read_tsv`, `clr_transform`, `plot_pcoa` |
 
 ## API 示例
@@ -177,6 +178,23 @@ explainer = SHAPExplainer(pipeline.clf)
 shap_values = explainer.shap_values(X_test)
 ```
 
+### AutoML模块
+
+```python
+from biomekit.automl import AutoMLPipeline, Program, list_programs
+
+# 查看可用program模板
+print(list_programs())
+# ['lung_gut_axis', 'nine_constitution', 'multiomics_integration', 'biomarker_discovery', 'fmt_matching']
+
+# 使用program约束运行AutoML
+program = Program(weights={'performance': 0.5, 'stability': 0.25, 'bio_relevance': 0.25})
+pipeline = AutoMLPipeline(X, y, program=program)
+results = pipeline.run(max_iterations=20)
+```
+
+AutoML遵循**autoresearch方法论**：固定评估器(`prepare.py`) + agent可修改代码(`train.py`) + 人类编写约束(`program.md`)。支持性能、特征稳定性和生物相关性多目标优化。
+
 ## 测试
 
 ```bash
@@ -208,11 +226,11 @@ pytest tests/test_abundance/ -v
 | 优先级 | 模块/功能 | 状态 | 描述 |
 |:------:|:----------|:----:|:------|
 | P0 | 算法模块库 | ✅ 完成 | 核心差异丰度、多样性、网络算法 |
-| P1 | 预测模型集 | 🔜 计划中 | 疾病分类、疗效预测模型（ML/DL） |
+| P1 | 预测模型集 | ✅ 完成 | 疾病分类、疗效预测模型（ML/DL） |
 | P2 | 多组学整合 | ✅ 完成 | 16S + 代谢组 + 宏基因组融合分析 |
 | P3 | Snakemake流程 | 🔜 计划中 | 基于Snakemake/Nextflow的生产级工作流 |
 | P4 | Web仪表盘 | 🔜 计划中 | 交互式可视化仪表盘 |
-| P5 | AutoML模块 | 🔜 计划中 | 微生物组数据自动超参数优化 |
+| P5 | AutoML模块 | ✅ 完成 | 基于autoresearch方法论的自动超参数优化 |
 
 ### 状态图例
 - ✅ 完成 - 可直接使用
